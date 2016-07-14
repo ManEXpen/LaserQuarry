@@ -1,0 +1,16 @@
+[
+{
+  "modid": "LaserQuarry",
+  "name": "LaserQuarry",
+  "description": "Laserの力を使って大地を\"編集\"しよう",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["ManEXpen"],
+  "credits": "ManEXpen and people who give ManEXpen Ideas",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
