@@ -8,7 +8,8 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import manexpen.LaserQuarry.init.Config;
 import manexpen.LaserQuarry.lib.LogHelper;
 import manexpen.LaserQuarry.proxies.CommonProxy;
-import manexpen.LaserQuarry.proxies.UniversalModInitializer;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
 import net.minecraftforge.common.config.Configuration;
 
 /**
@@ -17,7 +18,6 @@ import net.minecraftforge.common.config.Configuration;
 @Mod(modid = "LaserQuarry", name = "LaserQuarry", useMetadata = true)
 public class LaserQuarry {
 
-    public static final LQCreativeTab creativeTab = new LQCreativeTab();
     @Mod.Instance("LaserQuarry")
     public static LaserQuarry instance;
 
@@ -36,20 +36,18 @@ public class LaserQuarry {
     @Mod.EventHandler
     public void init(FMLInitializationEvent e) {
         LogHelper.info("Initializing...");
+        proxy.register();
         LogHelper.info("Initializing Finished...");
-    }
-
-    private void preInit(){
-        proxy.register();
-    }
-
-    private void init(){
-        proxy.register();
-        proxy.networkRegister();
-        proxy.renderRegister();
     }
 
     private void setModMetaData(ModMetadata modMetadata) {
         modMetadata.version = "A-0.0.1";
     }
+
+    public static final CreativeTabs LQCreativeTab = new CreativeTabs("laser") {
+        @Override
+        public Item getTabIconItem() {
+            return Item.getItemFromBlock(LQItemBlockList.quarry);
+        }
+    };
 }
