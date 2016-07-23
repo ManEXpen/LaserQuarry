@@ -37,6 +37,8 @@ public class LaserQuarry {
     public void init(FMLInitializationEvent e) {
         LogHelper.info("Initializing...");
         proxy.register();
+        proxy.networkRegister(instance);
+        proxy.renderRegister(instance);
         LogHelper.info("Initializing Finished...");
     }
 

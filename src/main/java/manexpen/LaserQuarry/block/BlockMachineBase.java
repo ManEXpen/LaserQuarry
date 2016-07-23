@@ -29,7 +29,9 @@ public abstract class BlockMachineBase extends BlockContainer implements IHasRec
 
 
     @Override
-    public abstract void getSubBlocks(Item item, CreativeTabs tabs, List list);
+    public void getSubBlocks(Item item, CreativeTabs tabs, List list) {
+        super.getSubBlocks(item, tabs, list);
+    }
 
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entity, ItemStack stack) {

@@ -1,6 +1,9 @@
 package manexpen.LaserQuarry.block;
 
+import manexpen.LaserQuarry.LaserQuarry;
+import manexpen.LaserQuarry.gui.GuiHandler;
 import manexpen.LaserQuarry.lib.DirectionHandler;
+import manexpen.LaserQuarry.lib.GuiRegistry;
 import manexpen.LaserQuarry.tileentity.TileLaserQuarry;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -11,6 +14,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -21,7 +25,6 @@ import java.util.List;
 public class BlockMachineLaserQuarry extends BlockMachineBase {
 
     private IIcon active, top, side, front, bottom;
-    private int renderPass;
 
     public BlockMachineLaserQuarry() {
     }
@@ -39,12 +42,13 @@ public class BlockMachineLaserQuarry extends BlockMachineBase {
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int var6, float var7, float var8, float var9) {
         super.onBlockActivated(world, x, y, z, player, var6, var7, var8, var9);
-        return false;
+        player.openGui(LaserQuarry.instance, GuiRegistry.getGuiId(GuiHandler.LASERQUARRY_GUI), world, x, y, z);
+        return true;
     }
 
     @Override
     public void getSubBlocks(Item item, CreativeTabs tabs, List list) {
-
+        super.getSubBlocks(item, tabs, list);
     }
 
     @Override
@@ -72,27 +76,23 @@ public class BlockMachineLaserQuarry extends BlockMachineBase {
         else if (side == 1)
             return top;
         else if ((side == 3 && meta == 0) || meta == side)
-            return active;
+            return front;
         else
             return this.side;
     }
 
-/*    @Override
+    @Override
     public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side) {
         TileLaserQuarry tile = (TileLaserQuarry) world.getTileEntity(x, y, z);
-
-    }*/
-
-    @Override
-    public boolean canRenderInPass(int pass) {
-        System.out.println(pass);
-        renderPass = pass;
-        return pass > 1;
+        int meta = world.getBlockMetadata(x, y, z);
+        if ((side == 3 && meta == 0) || meta == side) {
+            if (tile.isActive) return active;
+        }
+        return getIcon(side, meta);
     }
 
 
     @Override
     public void registerRecipe() {
     }
-
 }

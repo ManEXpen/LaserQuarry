@@ -1,7 +1,6 @@
 package manexpen.LaserQuarry.tileentity;
 
-import manexpen.LaserQuarry.lib.IconRegistry;
-import net.minecraft.util.IIcon;
+import net.minecraft.nbt.NBTTagCompound;
 
 /**
  * Created by ManEXpen on 2016/07/17.
@@ -9,9 +8,28 @@ import net.minecraft.util.IIcon;
 public class TileLaserQuarry extends TileMachineBase {
     public boolean isActive = false;
 
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
     @Override
-    public IIcon getTexture(int i, int i1) {
-        System.out.println(i + " : " + i1);
-        return IconRegistry.getIcon("front");
+    public void readFromNBT(NBTTagCompound tagCompound) {
+        super.readFromNBT(tagCompound);
+    }
+
+    @Override
+    public void writeToNBT(NBTTagCompound tagCompound) {
+        super.writeToNBT(tagCompound);
+    }
+
+
+    @Override
+    public String getInventoryName() {
+        return "LaserQuarry";
     }
 }
