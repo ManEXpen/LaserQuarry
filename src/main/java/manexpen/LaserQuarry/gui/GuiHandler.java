@@ -1,6 +1,7 @@
 package manexpen.LaserQuarry.gui;
 
 import cpw.mods.fml.common.network.IGuiHandler;
+import manexpen.LaserQuarry.gui.client.GuiLaserQuarry;
 import manexpen.LaserQuarry.gui.container.LaserQuarryContainer;
 import manexpen.LaserQuarry.lib.GuiRegistry;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,14 +16,14 @@ public class GuiHandler implements IGuiHandler {
     @Override
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         if (ID == GuiRegistry.getGuiId(LASERQUARRY_GUI))
-            return new LaserQuarryContainer(x, y, z);
+            return new LaserQuarryContainer(x, y, z, player, world);
         return null;
     }
 
     @Override
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         if (ID == GuiRegistry.getGuiId(LASERQUARRY_GUI))
-            return new GuiLaserQuarryContainer(x, y, z);
+            return new GuiLaserQuarry(x, y, z, player, world);
 
         return null;
     }

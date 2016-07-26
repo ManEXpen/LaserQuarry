@@ -1,0 +1,25 @@
+package manexpen.LaserQuarry.packet.messages;
+
+import com.google.common.base.Preconditions;
+import cpw.mods.fml.common.network.simpleimpl.IMessage;
+import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
+import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import manexpen.LaserQuarry.tileentity.TileLaserQuarry;
+import net.minecraft.client.Minecraft;
+
+/**
+ * Created by ManEXpen on 2016/07/25.
+ */
+public class LQMessageHandler implements IMessageHandler<LQSyncPacket, IMessage> {
+    @Override
+    public IMessage onMessage(LQSyncPacket pkt, MessageContext ctx) {
+        try {
+            TileLaserQuarry tileLaserQuarry = (TileLaserQuarry) Minecraft.getMinecraft().theWorld.getTileEntity(pkt.getX(), pkt.getY(), pkt.getZ());
+            Preconditions.checkNotNull(tileLaserQuarry, "Packet Error while Sending/Recieving");
+            tileLaserQuarry.setActive(pkt.getIsActive());
+            tileLaserQuarry.setStackSize(pkt.getDisplayStackSize());
+        } catch (NullPointerException e) {
+        }
+        return null;
+    }
+}

@@ -1,10 +1,10 @@
 package manexpen.LaserQuarry.lib;
 
+import com.google.common.base.Preconditions;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Created by ManEXpen on 2016/07/23.
@@ -18,8 +18,8 @@ public class GuiRegistry {
     }
 
     public static int getGuiId(String guiName) {
-        checkNotNull(guiName, "guiName must not be null");
-        Integer guiId = checkNotNull(guiList.get(guiName), "Not found guiId in guiList.Please make sure registered.");
+        Preconditions.checkNotNull(guiName, "guiName must not be null");
+        Integer guiId = Preconditions.checkNotNull(guiList.get(guiName), "Not found guiId in guiList.Please make sure registered.");
         return guiId;
     }
 

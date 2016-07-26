@@ -55,7 +55,9 @@ public class BlockMachineLaserQuarry extends BlockMachineBase {
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entity, ItemStack stack) {
         super.onBlockPlacedBy(world, x, y, z, entity, stack);
 
-        DirectionHandler.setMetadataByDir(world, x, y, z, entity);
+        if (!world.isRemote) {
+            DirectionHandler.setMetadataByDir(world, x, y, z, entity);
+        }
     }
 
     @Override

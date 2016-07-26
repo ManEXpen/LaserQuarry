@@ -15,8 +15,10 @@ import net.minecraftforge.common.config.Configuration;
 /**
  * Created by ManEXpen on 2016/07/11.
  */
-@Mod(modid = "LaserQuarry", name = "LaserQuarry", useMetadata = true)
+@Mod(modid = LaserQuarry.MODNAME, name = LaserQuarry.MODNAME, useMetadata = true)
 public class LaserQuarry {
+
+    public static final String MODNAME = "LaserQuarry";
 
     @Mod.Instance("LaserQuarry")
     public static LaserQuarry instance;

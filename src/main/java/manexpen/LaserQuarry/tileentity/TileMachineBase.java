@@ -1,5 +1,8 @@
 package manexpen.LaserQuarry.tileentity;
 
+import manexpen.LaserQuarry.api.IGuiConnector;
+import manexpen.LaserQuarry.packet.LQPacketHandler;
+import manexpen.LaserQuarry.packet.messages.LQSyncPacket;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -8,12 +11,26 @@ import net.minecraft.tileentity.TileEntity;
 /**
  * Created by ManEXpen on 2016/07/16.
  */
-public abstract class TileMachineBase extends TileEntity implements IInventory {
-    public ItemStack[] itemStacks = new ItemStack[400000];
+public abstract class TileMachineBase extends TileEntity implements IInventory, IGuiConnector {
+    public ItemStack[] itemStacks;
+    protected int maxStackSize;
+    protected int energy;
+    protected int stackCount = 0;
+    protected boolean canOutput = true;
+    public boolean isActive = false;
+
+    @Override
+    public void updateEntity() {
+        if (!worldObj.isRemote) {
+            LQPacketHandler.INSTANCE.sendToAll(new LQSyncPacket(xCoord, yCoord, zCoord, stackCount, energy, isActive));
+        }
+    }
 
     @Override
     public int getSizeInventory() {
-        return itemStacks.length;
+        if (canOutput)
+            return maxStackSize;
+        return 0;
     }
 
     @Override
@@ -27,11 +44,13 @@ public abstract class TileMachineBase extends TileEntity implements IInventory {
             ItemStack itemstack;
 
             if (this.itemStacks[slot].stackSize <= number) {
+                //stackCount -= itemStacks[slot].stackSize;
                 itemstack = this.itemStacks[slot];
                 this.itemStacks[slot] = null;
                 this.markDirty();
                 return itemstack;
             } else {
+                //stackCount -= number;
                 itemstack = this.itemStacks[slot].splitStack(number);
 
                 if (this.itemStacks[slot].stackSize == 0) {
@@ -55,16 +74,6 @@ public abstract class TileMachineBase extends TileEntity implements IInventory {
         return null;
     }
 
-    @Override
-    public void setInventorySlotContents(int slot, ItemStack itemStack) {
-        this.itemStacks[slot] = itemStack;
-
-        if (itemStack != null && itemStack.stackSize > this.getInventoryStackLimit()) {
-            itemStack.stackSize = this.getInventoryStackLimit();
-        }
-
-        this.markDirty();
-    }
 
     @Override
     public boolean hasCustomInventoryName() {
@@ -73,7 +82,9 @@ public abstract class TileMachineBase extends TileEntity implements IInventory {
 
     @Override
     public int getInventoryStackLimit() {
-        return 64;
+        if (canOutput)
+            return 64;
+        return 0;
     }
 
     @Override
@@ -91,7 +102,7 @@ public abstract class TileMachineBase extends TileEntity implements IInventory {
 
     @Override
     public boolean isItemValidForSlot(int p_94041_1_, ItemStack p_94041_2_) {
-        return true;
+        return canOutput;
     }
 
 }
