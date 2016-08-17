@@ -1,5 +1,8 @@
 package manexpen.LaserQuarry.tileentity;
 
+import cofh.api.energy.EnergyStorage;
+import manexpen.LaserQuarry.packet.LQPacketHandler;
+import manexpen.LaserQuarry.packet.messages.LQSyncPacket;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -14,11 +17,17 @@ public class TileLaserQuarry extends TileMachineBase {
     public TileLaserQuarry() {
         this.maxStackSize = 40000;
         this.itemStacks = new ItemStack[maxStackSize];
+        this.storage = new EnergyStorage(900000);
+        this.AccessibleSlot = new int[]{0, 1, 2, 3, 4, 5};
     }
 
     @Override
     public void updateEntity() {
         super.updateEntity();
+        if (!worldObj.isRemote) {
+            LQPacketHandler.INSTANCE.sendToAll(new LQSyncPacket(xCoord, yCoord, zCoord, stackCount, getEnergyStored(null), isActive()));
+        }
+
     }
 
     @Override
@@ -76,6 +85,22 @@ public class TileLaserQuarry extends TileMachineBase {
         this.markDirty();
     }
 
+
+    @Override
+    public int[] getAccessibleSlotsFromSide(int p_94128_1_) {
+        return this.AccessibleSlot;
+    }
+
+    @Override
+    public boolean canInsertItem(int p_102007_1_, ItemStack p_102007_2_, int p_102007_3_) {
+        return true;
+    }
+
+    @Override
+    public boolean canExtractItem(int p_102008_1_, ItemStack p_102008_2_, int p_102008_3_) {
+        return true;
+    }
+
     public boolean isActive() {
         return isActive;
     }
@@ -92,7 +117,18 @@ public class TileLaserQuarry extends TileMachineBase {
     }
 
     @Override
-    public void setStackSize(int size) {
-        this.stackCount = size;
+    public void setDispStackSize(int stackSize) {
+        this.stackCount = stackSize;
     }
+
+    @Override
+    public double getProgress() {
+        return calcProgress(0);
+    }
+
+    @Override
+    public double calcProgress(double progress) {
+        return 0;
+    }
+
 }

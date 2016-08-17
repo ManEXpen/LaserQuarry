@@ -1,6 +1,7 @@
 package manexpen.LaserQuarry.gui.client;
 
 import manexpen.LaserQuarry.gui.container.LaserQuarryContainer;
+import manexpen.LaserQuarry.gui.guiparts.LQGuiButton;
 import manexpen.LaserQuarry.tileentity.TileLaserQuarry;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,6 +17,12 @@ public class GuiLaserQuarry extends GuiContainer {
 
     private int x, y, z;
     private TileLaserQuarry tileLaserQuarry;
+    private World worldObj;
+    private EntityPlayer player;
+    private int TestProgress, TestProgressS = 0;
+
+    private LQGuiButton isDoNotify;
+
 
     public GuiLaserQuarry(int x, int y, int z, EntityPlayer player, World world) {
         super(new LaserQuarryContainer(x, y, z, player, world));
@@ -23,19 +30,21 @@ public class GuiLaserQuarry extends GuiContainer {
         this.y = y;
         this.z = z;
         tileLaserQuarry = (TileLaserQuarry) world.getTileEntity(x, y, z);
-        this.xSize = 176;
-        this.ySize = 165;
+        this.xSize = 169;
+        this.ySize = 159;
+        this.player = player;
+        this.worldObj = world;
     }
 
     @Override
     public void initGui() {
         super.initGui();
+        int xStart = (this.width - this.xSize) / 2;
+        int yStart = (this.height - this.ySize) / 2;
+        this.isDoNotify = new LQGuiButton(0, xStart + 50, yStart + 79, 76, 7, "Notify when Work is Done.");
+        this.buttonList.add(isDoNotify);
     }
 
-    @Override
-    protected void keyTyped(char p_73869_1_, int p_73869_2_) {
-        super.keyTyped(p_73869_1_, p_73869_2_);
-    }
 
     @Override
     public void updateScreen() {
@@ -46,17 +55,23 @@ public class GuiLaserQuarry extends GuiContainer {
     protected void drawGuiContainerForegroundLayer(int var1, int var2) {
         super.drawGuiContainerForegroundLayer(var1, var2);
         String s = String.valueOf(tileLaserQuarry.getInventoryName());
-        this.fontRendererObj.drawString(s, this.xSize / 2 - this.fontRendererObj.getStringWidth(s) / 2, 6, 0x62a48);
+        this.fontRendererObj.drawString(s, this.xSize / 2 - this.fontRendererObj.getStringWidth(s) / 2, 2, 0xFFFFFF);
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTick, int mouseX, int mouseY) {
         GL11.glColor4f(1f, 1f, 1f, 1f);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glEnable(GL11.GL_BLEND);
         this.mc.renderEngine.bindTexture(GUI_RESOURCE_LOCATION);
+
         int xStart = (this.width - this.xSize) / 2;
         int yStart = (this.height - this.ySize) / 2;
         this.drawTexturedModalRect(xStart, yStart, 0, 0, xSize, ySize);
-        this.drawTexturedModalRect(50, 50, 176, 134, 30, 31);
+        this.drawTexturedModalRect(xStart + 37, yStart + 10, 0, 160, setTestProgress(), 6);
+        this.drawTexturedModalRect(xStart + 37, yStart + 17, 0, 160, setTestProgress(), 6);
+        this.drawTexturedModalRect(xStart + 7, yStart + 6, 170, 0, 12, setTestProgressS());
+        this.drawTexturedModalRect(xStart + 151, yStart + 6, 170, 0, 12, setTestProgressS());
     }
 
     @Override
@@ -65,8 +80,24 @@ public class GuiLaserQuarry extends GuiContainer {
     }
 
     @Override
-    public void mouseClicked(int i, int j, int k) {
-        super.mouseClicked(i, j, k);
-        System.out.println(i + ":" + j + ":" + k);
+    public void mouseClicked(int x, int y, int mouseButtonType) {
+        super.mouseClicked(x, y, mouseButtonType);
+        System.out.println(x + ":" + y + ":" + mouseButtonType);
+    }
+
+    public int setTestProgressS() {
+        if (TestProgressS == 39) {
+            TestProgressS = 0;
+            return 0;
+        }
+        return TestProgressS++;
+    }
+
+    public int setTestProgress() {
+        if (TestProgress == 98) {
+            TestProgress = 0;
+            return TestProgress;
+        }
+        return TestProgress++;
     }
 }

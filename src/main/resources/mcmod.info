@@ -9,7 +9,7 @@
   "updateUrl": "",
   "authorList": ["ManEXpen"],
   "credits": "ManEXpen and people who give ManEXpen Ideas",
-  "logoFile": "",
+  "logoFile": "assets/laser/textures/logo.png",
   "screenshots": [],
   "dependencies": []
 }

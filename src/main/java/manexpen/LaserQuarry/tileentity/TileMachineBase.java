@@ -1,30 +1,46 @@
 package manexpen.LaserQuarry.tileentity;
 
-import manexpen.LaserQuarry.api.IGuiConnector;
-import manexpen.LaserQuarry.packet.LQPacketHandler;
-import manexpen.LaserQuarry.packet.messages.LQSyncPacket;
+import cofh.api.energy.EnergyStorage;
+import cofh.api.energy.IEnergyHandler;
+import manexpen.LaserQuarry.api.IMultiable;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.ForgeDirection;
 
 /**
  * Created by ManEXpen on 2016/07/16.
  */
-public abstract class TileMachineBase extends TileEntity implements IInventory, IGuiConnector {
+public abstract class TileMachineBase extends TileEntity implements ISidedInventory, IMultiable, IEnergyHandler {
     public ItemStack[] itemStacks;
     protected int maxStackSize;
     protected int energy;
     protected int stackCount = 0;
     protected boolean canOutput = true;
+    protected int[] AccessibleSlot;
     public boolean isActive = false;
+
+    protected EnergyStorage storage;
+
+    @Override
+    public void readFromNBT(NBTTagCompound tagCompound) {
+        super.readFromNBT(tagCompound);
+        storage.readFromNBT(tagCompound);
+    }
+
+    @Override
+    public void writeToNBT(NBTTagCompound tagCompound) {
+        super.writeToNBT(tagCompound);
+        storage.writeToNBT(tagCompound);
+    }
 
     @Override
     public void updateEntity() {
-        if (!worldObj.isRemote) {
-            LQPacketHandler.INSTANCE.sendToAll(new LQSyncPacket(xCoord, yCoord, zCoord, stackCount, energy, isActive));
-        }
     }
+
+    /*IInventory and ISidedInventory*/
 
     @Override
     public int getSizeInventory() {
@@ -44,13 +60,13 @@ public abstract class TileMachineBase extends TileEntity implements IInventory, 
             ItemStack itemstack;
 
             if (this.itemStacks[slot].stackSize <= number) {
-                //stackCount -= itemStacks[slot].stackSize;
                 itemstack = this.itemStacks[slot];
+                stackCount -= itemstack.stackSize;
                 this.itemStacks[slot] = null;
                 this.markDirty();
                 return itemstack;
             } else {
-                //stackCount -= number;
+                stackCount -= number;
                 itemstack = this.itemStacks[slot].splitStack(number);
 
                 if (this.itemStacks[slot].stackSize == 0) {
@@ -105,4 +121,38 @@ public abstract class TileMachineBase extends TileEntity implements IInventory, 
         return canOutput;
     }
 
+
+    /*RF制御*/
+
+    @Override
+    public int extractEnergy(ForgeDirection from, int maxExtract, boolean simulate) {
+        return 0;
+    }
+
+    @Override
+    public boolean canConnectEnergy(ForgeDirection from) {
+        return true;
+    }
+
+    @Override
+    public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate) {
+        System.out.println(getEnergyStored(null));
+        return storage.receiveEnergy(maxReceive, simulate);
+    }
+
+    /*null呼び出しでおｋ*/
+    @Override
+    public int getEnergyStored(ForgeDirection from) {
+        return storage.getEnergyStored();
+    }
+
+    @Override
+    public int getMaxEnergyStored(ForgeDirection from) {
+        return storage.getMaxEnergyStored();
+    }
+
+    @Override
+    public void setEnergy(int energy) {
+        this.energy = energy;
+    }
 }

@@ -4,6 +4,7 @@ import cpw.mods.fml.common.network.IGuiHandler;
 import manexpen.LaserQuarry.gui.client.GuiLaserQuarry;
 import manexpen.LaserQuarry.gui.container.LaserQuarryContainer;
 import manexpen.LaserQuarry.lib.GuiRegistry;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
@@ -26,5 +27,9 @@ public class GuiHandler implements IGuiHandler {
             return new GuiLaserQuarry(x, y, z, player, world);
 
         return null;
+    }
+
+    public static class FontRendererObj {
+        public static FontRenderer fontRenderer;
     }
 }

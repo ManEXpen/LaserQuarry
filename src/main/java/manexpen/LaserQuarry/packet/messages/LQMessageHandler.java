@@ -17,7 +17,8 @@ public class LQMessageHandler implements IMessageHandler<LQSyncPacket, IMessage>
             TileLaserQuarry tileLaserQuarry = (TileLaserQuarry) Minecraft.getMinecraft().theWorld.getTileEntity(pkt.getX(), pkt.getY(), pkt.getZ());
             Preconditions.checkNotNull(tileLaserQuarry, "Packet Error while Sending/Recieving");
             tileLaserQuarry.setActive(pkt.getIsActive());
-            tileLaserQuarry.setStackSize(pkt.getDisplayStackSize());
+            tileLaserQuarry.setDispStackSize(pkt.getDisplayStackSize());
+            tileLaserQuarry.setEnergy(pkt.getEnergy());
         } catch (NullPointerException e) {
         }
         return null;
