@@ -18,9 +18,6 @@ class EntityRedLine(var world: World, var startPosX: Double, var endPosX: Double
 
   val texture = new ResourceLocation("laser", "textures/entities/laserRed.png")
 
-  override def onUpdate() = {
-
-  }
 
   def setPositions(startPosX: Double, endPosX: Double, startPosY: Double, endPosY: Double, startPosZ: Double, endPosZ: Double): Unit = {
     this.startPosX = startPosX
@@ -32,8 +29,11 @@ class EntityRedLine(var world: World, var startPosX: Double, var endPosX: Double
     setPositionAndRotation(this.startPosX, this.startPosY, this.startPosZ, 0.0F, 0.0F)
   }
 
-  override def getTexture: ResourceLocation = texture
+  override def onUpdate(): Unit = {
+    super.onUpdate()
+  }
 
+  override def getTexture: ResourceLocation = texture
 
   override def getBrightnessForRender(p_70070_1_ : Float): Int = 210
 

@@ -3,7 +3,6 @@ package manexpen.LaserQuarry.render;
 import manexpen.LaserQuarry.entity.EntityRedLine;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
@@ -20,7 +19,6 @@ public class RenderRedLine extends Render {
 
     @Override
     public void doRender(Entity entity, double x, double y, double z, float p_76986_8_, float p_76986_9_) {
-        Tessellator tessellator = Tessellator.instance;
         EntityRedLine redLine = (EntityRedLine) entity;
 
         glPushMatrix();
@@ -28,7 +26,7 @@ public class RenderRedLine extends Render {
 
         glTranslated(0.5, 0, 0.5);
 
-        this.bindEntityTexture(entity);
+        bindTexture(getEntityTexture(redLine));
         this.model.render(redLine, 0, 0, 0, 0, 0, 0.0625F);
 
         glPopMatrix();

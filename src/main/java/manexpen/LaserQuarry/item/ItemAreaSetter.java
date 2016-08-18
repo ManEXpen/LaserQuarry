@@ -12,6 +12,7 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,6 +27,11 @@ public class ItemAreaSetter extends ItemToolBase {
     private static final int MAX_TRANSFER = 2000;
     private int storage;
 
+    private boolean initLaser = false;
+
+
+    private List<EntityRedLine> foundLasers = new ArrayList<>();
+
     public ItemAreaSetter() {
         setTextureName("laser:areasetter");
         setMaxStackSize(1);
@@ -33,16 +39,6 @@ public class ItemAreaSetter extends ItemToolBase {
 
     @Override
     public void onUpdate(ItemStack itemStack, World world, Entity entity, int p_77663_4_, boolean p_77663_5_) {
-        switch (useCount) {
-            case 0:
-                particle(world, posX1, posZ1);
-                break;
-            case 1:
-                particle(world, posX1, posZ1);
-                particle(world, posX2, posZ2);
-                particle(world, posX1, posZ2);
-                particle(world, posX2, posZ1);
-        }
     }
 
     @Override
@@ -53,7 +49,7 @@ public class ItemAreaSetter extends ItemToolBase {
 
 
         if (storage > USE_ENERGY) {
-            if (!world.isRemote) {
+            if (world.isRemote) {
                 switch (useCount) {
                     case 0:
                         this.posX1 = x;
@@ -68,18 +64,34 @@ public class ItemAreaSetter extends ItemToolBase {
                         particle(world, posX2, posZ2);
                         particle(world, posX1, posZ2);
                         particle(world, posX2, posZ1);
-                        useCount--;
+                        useCount++;
                         break;
-                    default:
+                    case 2:
+                        foundLasers.forEach(EntityRedLine::setDead);
                         useCount = 0;
+                        break;
                 }
-
+                System.out.println(posX1 + " " + posX2);
                 player.addChatComponentMessage(new ChatComponentText(EnumChatColor.AQUA + StatCollector.translateToLocal("laesr.chat.areasetter.setPos") + ": " + EnumChatColor.WHITE + "X= " + x + " Z= " + z));
+
                 this.storage = storage - USE_ENERGY;
                 setEnergyToNBT(itemStack, this.storage);
+
+                return true;
+            } else {
+                switch (useCount) {
+                    case 0:
+                        this.posX1 = x;
+                        this.posZ1 = z;
+                        break;
+                    case 1:
+                        this.posX2 = x;
+                        this.posZ2 = z;
+                        break;
+                }
             }
-            return true;
         }
+
         return false;
     }
 
@@ -124,9 +136,16 @@ public class ItemAreaSetter extends ItemToolBase {
         return MAXENRGY;
     }
 
+
     @SideOnly(Side.CLIENT)
     private void particle(World world, int x, int z) {
-        world.spawnEntityInWorld(new EntityRedLine(world, x, x, 0, 256, z, z));
+        EntityRedLine entityRedLine = new EntityRedLine(world, x, x, 0, 256, z, z);
+        foundLasers.add(entityRedLine);
+        world.spawnEntityInWorld(entityRedLine);
+    }
+
+    public void setUseCount(int useCount) {
+        this.useCount = useCount;
     }
 
 }

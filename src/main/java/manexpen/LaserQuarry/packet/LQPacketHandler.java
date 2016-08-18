@@ -4,7 +4,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
 import manexpen.LaserQuarry.LaserQuarry;
-import manexpen.LaserQuarry.packet.messages.LQMessageHandler;
+import manexpen.LaserQuarry.packet.messages.Handler.LQMessageHandler;
 import manexpen.LaserQuarry.packet.messages.LQSyncPacket;
 
 /**
