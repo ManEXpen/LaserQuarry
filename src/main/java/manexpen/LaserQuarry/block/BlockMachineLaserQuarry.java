@@ -1,7 +1,9 @@
 package manexpen.LaserQuarry.block;
 
 import manexpen.LaserQuarry.LaserQuarry;
+import manexpen.LaserQuarry.api.PosData2Dim;
 import manexpen.LaserQuarry.gui.GuiHandler;
+import manexpen.LaserQuarry.item.ItemAreaSetter;
 import manexpen.LaserQuarry.lib.DirectionHandler;
 import manexpen.LaserQuarry.lib.GuiRegistry;
 import manexpen.LaserQuarry.tileentity.TileLaserQuarry;
@@ -13,6 +15,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -42,6 +45,30 @@ public class BlockMachineLaserQuarry extends BlockMachineBase {
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int var6, float var7, float var8, float var9) {
         super.onBlockActivated(world, x, y, z, player, var6, var7, var8, var9);
+
+        TileEntity tmp = world.getTileEntity(x, y, z);
+        ItemStack b = player.getCurrentEquippedItem();
+
+        if (!world.isRemote && tmp != null && b != null) {
+
+            if (b.getItem() instanceof ItemAreaSetter && tmp instanceof TileLaserQuarry) {
+                TileLaserQuarry tile = (TileLaserQuarry) tmp;
+                ItemAreaSetter item = (ItemAreaSetter) b.getItem();
+
+                if (item.getFoundLasers().size() == 5) {
+                    //TileEntity処理
+                    tile.clearData();
+                    item.getFoundLasers().forEach(tile::setLaser);
+                    tile.setPosData(new PosData2Dim(item.getPosData()));
+                    //TileEntityにデータを移したらitemのLaserListをクリア
+                    item.clearFoundLaserList();
+                    player.addChatComponentMessage(new ChatComponentText("Set Pos Data to LaserQuarry"));
+                    return true;
+                }
+            }
+        }
+
+
         player.openGui(LaserQuarry.instance, GuiRegistry.getGuiId(GuiHandler.LASERQUARRY_GUI), world, x, y, z);
         return true;
     }
@@ -59,6 +86,12 @@ public class BlockMachineLaserQuarry extends BlockMachineBase {
 
     @Override
     public void breakBlock(World world, int x, int y, int z, Block block, int var6) {
+        TileEntity tmp = world.getTileEntity(x, y, z);
+        if (tmp != null) {
+            TileLaserQuarry tile = (TileLaserQuarry) tmp;
+            tile.clearData();
+        }
+
         super.breakBlock(world, x, y, z, block, var6);
     }
 

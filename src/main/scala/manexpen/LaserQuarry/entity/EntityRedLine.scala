@@ -16,24 +16,22 @@ class EntityRedLine(var world: World, var startPosX: Double, var endPosX: Double
   setSize(1, 256)
 
 
-  val texture = new ResourceLocation("laser", "textures/entities/laserRed.png")
+  var laserColor = LaserColor.BLUE
 
+  private val redLaser: ResourceLocation = new ResourceLocation("laser", "textures/entities/laserRed.png")
+  private val blueLaser: ResourceLocation = new ResourceLocation("laser", "textures/entities/laserBlue.png")
 
-  def setPositions(startPosX: Double, endPosX: Double, startPosY: Double, endPosY: Double, startPosZ: Double, endPosZ: Double): Unit = {
-    this.startPosX = startPosX
-    this.endPosX = endPosX
-    this.startPosY = startPosY
-    this.endPosY = endPosY
-    this.startPosZ = startPosZ
-    this.endPosZ = endPosZ
-    setPositionAndRotation(this.startPosX, this.startPosY, this.startPosZ, 0.0F, 0.0F)
-  }
+  def changeTexture(color: LaserColor): Unit = this.laserColor = color
 
-  override def onUpdate(): Unit = {
-    super.onUpdate()
-  }
+  override def getTexture: ResourceLocation =
+    laserColor match {
+      case LaserColor.RED =>
+        redLaser
+      case LaserColor.BLUE =>
+        blueLaser
+    }
 
-  override def getTexture: ResourceLocation = texture
+  override def onUpdate(): Unit = super.onUpdate()
 
   override def getBrightnessForRender(p_70070_1_ : Float): Int = 210
 
@@ -51,5 +49,6 @@ class EntityRedLine(var world: World, var startPosX: Double, var endPosX: Double
   override def onEntityUpdate(): Unit = {
     super.onEntityUpdate()
   }
+
 
 }

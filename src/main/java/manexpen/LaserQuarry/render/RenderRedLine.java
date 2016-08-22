@@ -22,19 +22,27 @@ public class RenderRedLine extends Render {
         EntityRedLine redLine = (EntityRedLine) entity;
 
         glPushMatrix();
+        glPushAttrib(GL_ENABLE_BIT);
+
+        glDisable(GL_LIGHTING);
+
+        //これないと位置ずれする
         glTranslated(x, y, z);
 
         glTranslated(0.5, 0, 0.5);
+        glScaled(2, 1, 2);
 
-        bindTexture(getEntityTexture(redLine));
+        bindEntityTexture(redLine);
         this.model.render(redLine, 0, 0, 0, 0, 0, 0.0625F);
 
+        glPopAttrib();
         glPopMatrix();
     }
 
     @Override
     protected ResourceLocation getEntityTexture(Entity entity) {
-        return ((EntityRedLine) entity).getTexture();
+        EntityRedLine redLine = (EntityRedLine) entity;
+        return redLine.getTexture();
     }
 
     private static class ModelRedLine extends ModelBase {

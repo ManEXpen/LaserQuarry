@@ -4,6 +4,7 @@ import cofh.lib.util.helpers.EnergyHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import manexpen.LaserQuarry.api.EnumChatColor;
+import manexpen.LaserQuarry.api.PosData2Dim;
 import manexpen.LaserQuarry.entity.EntityRedLine;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -19,7 +20,8 @@ import java.util.List;
  * Created by ManEXpen on 2016/07/30.
  */
 public class ItemAreaSetter extends ItemToolBase {
-    public int posX1, posZ1, posX2, posZ2;
+    private int posX1, posZ1, posX2, posZ2;
+
 
     private int useCount = 0;
     private static final int USE_ENERGY = 100;
@@ -27,14 +29,29 @@ public class ItemAreaSetter extends ItemToolBase {
     private static final int MAX_TRANSFER = 2000;
     private int storage;
 
-    private boolean initLaser = false;
+
+    private ArrayList<EntityRedLine> foundLasers = new ArrayList<>();
+    private PosData2Dim posData = new PosData2Dim(0, 0, 0, 0);
 
 
-    private List<EntityRedLine> foundLasers = new ArrayList<>();
+    public PosData2Dim getPosData() {
+        return posData;
+    }
+
 
     public ItemAreaSetter() {
         setTextureName("laser:areasetter");
         setMaxStackSize(1);
+    }
+
+    public ArrayList<EntityRedLine> getFoundLasers() {
+        return foundLasers;
+    }
+
+    public void clearFoundLaserList() {
+        foundLasers = null;
+        foundLasers = new ArrayList<>();
+        useCount = 0;
     }
 
     @Override
@@ -60,6 +77,7 @@ public class ItemAreaSetter extends ItemToolBase {
                     case 1:
                         this.posX2 = x;
                         this.posZ2 = z;
+                        this.posData = new PosData2Dim(posX1, posZ1, posX2, posZ2);
                         particle(world, posX1, posZ1);
                         particle(world, posX2, posZ2);
                         particle(world, posX1, posZ2);
@@ -68,14 +86,14 @@ public class ItemAreaSetter extends ItemToolBase {
                         break;
                     case 2:
                         foundLasers.forEach(EntityRedLine::setDead);
+                        foundLasers.clear();
+                        this.posData = new PosData2Dim(0, 0, 0, 0);
                         useCount = 0;
                         break;
                 }
                 System.out.println(posX1 + " " + posX2);
                 player.addChatComponentMessage(new ChatComponentText(EnumChatColor.AQUA + StatCollector.translateToLocal("laesr.chat.areasetter.setPos") + ": " + EnumChatColor.WHITE + "X= " + x + " Z= " + z));
 
-                this.storage = storage - USE_ENERGY;
-                setEnergyToNBT(itemStack, this.storage);
 
                 return true;
             } else {
@@ -87,9 +105,12 @@ public class ItemAreaSetter extends ItemToolBase {
                     case 1:
                         this.posX2 = x;
                         this.posZ2 = z;
+                        this.posData = new PosData2Dim(posX1, posZ1, posX2, posZ2);
                         break;
                 }
             }
+            this.storage = storage - USE_ENERGY;
+            setEnergyToNBT(itemStack, this.storage);
         }
 
         return false;
@@ -141,6 +162,7 @@ public class ItemAreaSetter extends ItemToolBase {
     private void particle(World world, int x, int z) {
         EntityRedLine entityRedLine = new EntityRedLine(world, x, x, 0, 256, z, z);
         foundLasers.add(entityRedLine);
+        System.out.println(foundLasers.size());
         world.spawnEntityInWorld(entityRedLine);
     }
 
