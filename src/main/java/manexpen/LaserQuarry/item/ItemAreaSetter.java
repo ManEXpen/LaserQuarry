@@ -162,7 +162,6 @@ public class ItemAreaSetter extends ItemToolBase {
     private void particle(World world, int x, int z) {
         EntityRedLine entityRedLine = new EntityRedLine(world, x, x, 0, 256, z, z);
         foundLasers.add(entityRedLine);
-        System.out.println(foundLasers.size());
         world.spawnEntityInWorld(entityRedLine);
     }
 

@@ -4,12 +4,18 @@ import cofh.api.energy.EnergyStorage;
 import manexpen.LaserQuarry.api.PosData2Dim;
 import manexpen.LaserQuarry.entity.EntityRedLine;
 import manexpen.LaserQuarry.entity.LaserColor;
+import manexpen.LaserQuarry.lib.BlockUtil;
+import manexpen.LaserQuarry.lib.InvUtil;
 import manexpen.LaserQuarry.packet.LQPacketHandler;
 import manexpen.LaserQuarry.packet.messages.LQSyncPacket;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockAir;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fluids.FluidRegistry;
 
 import java.util.ArrayList;
 
@@ -20,8 +26,13 @@ public class TileLaserQuarry extends TileMachineBase {
     private ArrayList<EntityRedLine> laserList = new ArrayList<>();
     private PosData2Dim posData;
 
-    private int nowIterateX, nowIterateY, nowIterateZ, startX, startZ, endX, endZ;
+    /*起動していないことを確かめるためのフラグ*/
+    private boolean isSleep = true;
 
+    /*各種現在のブロックを指すためのパラメータ*/
+    private int nowIterateX, nowIterateY, nowIterateZ, startX, startZ, endX, endZ = 0;
+
+    private int te = 0;
 
     public TileLaserQuarry() {
         this.maxStackSize = 40000;
@@ -44,31 +55,30 @@ public class TileLaserQuarry extends TileMachineBase {
         if (laserList != null) laserList.forEach(EntityRedLine::setDead);
         laserList = null;
         laserList = new ArrayList<>();
+        startX = endX = startZ = endZ = nowIterateX = nowIterateY = nowIterateZ = 0;
+        setActive(false);
+        isSleep = true;
     }
 
     private void doWork() {
         if (isActive() && posData != null) {
-            initWork();
 
+            if (isSleep) initWork();
+            isSleep = false;
+
+            System.out.println("StartDig");
+            //一旦行が終わったらまたstart~,end~に初期化するようにする
             for (; nowIterateY > 0; nowIterateY--) {
                 for (; nowIterateX <= endX; nowIterateX++) {
-                    for (; nowIterateZ <= endZ; ) {
-
-                        //TODO: こ↑こ↓にブロック消去及びエネルギー操作を行う。スタック管理は別メソッドに切り出せ
-                        
-                        nowIterateZ++;
+                    System.out.println("SD");
+                    for (; nowIterateZ <= endZ; nowIterateZ++) {
+                        //if (BlockUtil.getDigEnergy(worldObj, nowIterateX, nowIterateY, nowIterateZ) < storage.getEnergyStored()) {
+                        dig(nowIterateX, nowIterateY, nowIterateZ);
+                        System.out.println("DIGING" + nowIterateX + " " + nowIterateY + " " + nowIterateZ);
+                        //}else return;
                     }
                 }
             }
-
-//            for (nowIterateY = 256; nowIterateY > 0; nowIterateY--) {
-//                for (nowIterateX = startX; nowIterateX <= Math.max(posData.x1(), posData.x2()); nowIterateX++) {
-//                    for (nowIterateZ = startZ; nowIterateZ <= Math.max(posData.z1(), posData.z2()); nowIterateZ++) {
-//                        if (storage.getEnergyStored() >)
-//                            worldObj.setBlockToAir(nowIterateX, nowIterateY, nowIterateZ);
-//                    }
-//                }
-//            }
             workFinished();
         } else if (!isActive() && posData != null) {
             if (storage.getEnergyStored() >= 100) {
@@ -79,7 +89,22 @@ public class TileLaserQuarry extends TileMachineBase {
 
     }
 
+    private void dig(final int x, final int y, final int z) {
+        Block digBlock = worldObj.getBlock(x, y, z);
+        if (digBlock instanceof BlockAir) return;
+
+        int needEnergy = BlockUtil.getDigEnergy(worldObj, x, y, z);
+        storage.modifyEnergyStored(-needEnergy);
+
+        if (FluidRegistry.lookupFluidForBlock(digBlock) == null) {
+            InvUtil.setInvItem(new ItemStack(digBlock, 1), this);
+        }
+
+        worldObj.setBlock(x, y, z, Blocks.air);
+    }
+
     private void initWork() {
+        System.out.println(posData.toString());
         startX = Math.min(posData.x1(), posData.x2());
         startZ = Math.min(posData.z1(), posData.z2());
         nowIterateX = startX;
@@ -94,6 +119,7 @@ public class TileLaserQuarry extends TileMachineBase {
         System.out.println('A');
         posData = null;
         setActive(false);
+        isSleep = true;
     }
 
     @Override
@@ -101,6 +127,7 @@ public class TileLaserQuarry extends TileMachineBase {
         super.updateEntity();
         if (!worldObj.isRemote) {
             doWork();
+
             LQPacketHandler.INSTANCE.sendToAll(new LQSyncPacket(xCoord, yCoord, zCoord, stackCount, getEnergyStored(null), isActive()));
         }
 

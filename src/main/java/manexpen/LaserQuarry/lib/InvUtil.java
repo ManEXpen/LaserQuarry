@@ -9,18 +9,28 @@ import net.minecraft.item.ItemStack;
 public class InvUtil {
 
     public static void setInvItem(final ItemStack addItem, TileMachineBase tile) {
-
         for (int i = 0; i < tile.itemStacks.length; i++) {
             ItemStack stack = tile.itemStacks[i];
 
+            //まず最初に指されている配列がnullか？とインスタンスが同じかを検証
+            if (stack != null && stack.getItem().getClass() == addItem.getItem().getClass()) {
+                //格納されているスタックサイズが64なら次の要素へ
+                if (64 == tile.itemStacks[i].stackSize) continue;
 
-            if (stack != null && stack.getItem().equals(addItem.getItem())) {
-                if (64 < tile.itemStacks[i].stackSize) continue;
-                else {
-                    tile.itemStacks[i].stackSize++;
-                    tile.markDirty();
-                    return;
+                //現在の数と加えたとき64を溢れないかチェック
+                if ((stack.stackSize + addItem.stackSize) - 64 <= 0) {
+                    stack.stackSize += addItem.stackSize;
+                } else {
+                    //溢れたら現在の場所に詰め込めるだけ詰め込んであふれた分はsetInvItemでどこかへ詰め込み
+                    int diff = (stack.stackSize + addItem.stackSize) - 64;
+                    stack.stackSize += addItem.stackSize - diff;
+                    setInvItem(new ItemStack(addItem.getItem(), diff, addItem.getItem().getDamage(addItem)), tile);
                 }
+                tile.markDirty();
+                System.out.println(tile.itemStacks[0].toString());
+                return;
+
+                //要素がnullならそこに詰め込み
             } else if (stack == null) {
                 tile.itemStacks[i] = addItem;
                 tile.markDirty();
