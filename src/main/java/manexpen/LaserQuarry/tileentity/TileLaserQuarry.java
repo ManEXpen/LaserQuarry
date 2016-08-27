@@ -3,19 +3,13 @@ package manexpen.LaserQuarry.tileentity;
 import cofh.api.energy.EnergyStorage;
 import manexpen.LaserQuarry.api.PosData2Dim;
 import manexpen.LaserQuarry.entity.EntityRedLine;
-import manexpen.LaserQuarry.entity.LaserColor;
-import manexpen.LaserQuarry.lib.BlockUtil;
-import manexpen.LaserQuarry.lib.InvUtil;
 import manexpen.LaserQuarry.packet.LQPacketHandler;
 import manexpen.LaserQuarry.packet.messages.LQSyncPacket;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockAir;
-import net.minecraft.init.Blocks;
+import manexpen.LaserQuarry.thread.ThreadDigGround;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fluids.FluidRegistry;
 
 import java.util.ArrayList;
 
@@ -23,16 +17,15 @@ import java.util.ArrayList;
  * Created by ManEXpen on 2016/07/17.
  */
 public class TileLaserQuarry extends TileMachineBase {
-    private ArrayList<EntityRedLine> laserList = new ArrayList<>();
-    private PosData2Dim posData;
+    public ArrayList<EntityRedLine> laserList = new ArrayList<>();
+    private ThreadDigGround digger;
+    public PosData2Dim posData;
 
     /*起動していないことを確かめるためのフラグ*/
-    private boolean isSleep = true;
+    public boolean isSleep = true;
 
     /*各種現在のブロックを指すためのパラメータ*/
     private int nowIterateX, nowIterateY, nowIterateZ, startX, startZ, endX, endZ = 0;
-
-    private int te = 0;
 
     public TileLaserQuarry() {
         this.maxStackSize = 40000;
@@ -58,76 +51,87 @@ public class TileLaserQuarry extends TileMachineBase {
         startX = endX = startZ = endZ = nowIterateX = nowIterateY = nowIterateZ = 0;
         setActive(false);
         isSleep = true;
+        if (digger != null) digger.stop();
+        digger = null;
     }
 
-    private void doWork() {
-        if (isActive() && posData != null) {
+//    private void doWork() {
+//        if (isActive() && posData != null) {
+//
+//            if (isSleep) initWork();
+//            isSleep = false;
+//
+//            System.out.println("StartDig");
+//            //一旦行が終わったらまたstart~,end~に初期化するようにする
+//            for (; nowIterateY > 0; nowIterateY--) {
+//                for (; nowIterateX <= endX; nowIterateX++) {
+//                    for (; nowIterateZ <= endZ; nowIterateZ++) {
+//                        if (BlockUtil.getDigEnergy(worldObj, nowIterateX, nowIterateY, nowIterateZ) < storage.getEnergyStored()) {
+//                            dig(nowIterateX, nowIterateY, nowIterateZ);
+//                            System.out.println("DIGING" + nowIterateX + " " + nowIterateY + " " + nowIterateZ);
+//                        } else {
+//                            return;
+//                        }
+//                    }
+//
+//                    nowIterateZ = startZ;
+//                }
+//                nowIterateX = startX;
+//            }
+//            workFinished();
+//        } else if (!isActive() && posData != null) {
+//            if (storage.getEnergyStored() >= 100) {
+//                setActive(true);
+//                laserList.forEach(x -> x.changeTexture(LaserColor.RED));
+//            }
+//        }
+//
+//    }
+//
+//    private void dig(final int x, final int y, final int z) {
+//        Block digBlock = worldObj.getBlock(x, y, z);
+//        if (digBlock instanceof BlockAir) return;
+//
+//        int needEnergy = BlockUtil.getDigEnergy(worldObj, x, y, z);
+//        storage.modifyEnergyStored(-needEnergy);
+//
+//        if (FluidRegistry.lookupFluidForBlock(digBlock) == null) {
+//            InvUtil.setInvItem(new ItemStack(digBlock, 1, worldObj.getBlockMetadata(x, y, z)), this);
+//        }
+//
+//        worldObj.setBlock(x, y, z, Blocks.air);
+//    }
+//
+//    private void initWork() {
+//        System.out.println(posData.toString());
+//        startX = Math.min(posData.x1(), posData.x2());
+//        startZ = Math.min(posData.z1(), posData.z2());
+//        nowIterateX = startX;
+//        nowIterateY = 256;
+//        nowIterateZ = startZ;
+//        endX = Math.max(posData.x1(), posData.x2());
+//        endZ = Math.max(posData.z1(), posData.z2());
+//    }
+//
+//
+//    private void workFinished() {
+//        System.out.println('A');
+//        posData = null;
+//        setActive(false);
+//        isSleep = true;
+//    }
 
-            if (isSleep) initWork();
-            isSleep = false;
-
-            System.out.println("StartDig");
-            //一旦行が終わったらまたstart~,end~に初期化するようにする
-            for (; nowIterateY > 0; nowIterateY--) {
-                for (; nowIterateX <= endX; nowIterateX++) {
-                    System.out.println("SD");
-                    for (; nowIterateZ <= endZ; nowIterateZ++) {
-                        //if (BlockUtil.getDigEnergy(worldObj, nowIterateX, nowIterateY, nowIterateZ) < storage.getEnergyStored()) {
-                        dig(nowIterateX, nowIterateY, nowIterateZ);
-                        System.out.println("DIGING" + nowIterateX + " " + nowIterateY + " " + nowIterateZ);
-                        //}else return;
-                    }
-                }
-            }
-            workFinished();
-        } else if (!isActive() && posData != null) {
-            if (storage.getEnergyStored() >= 100) {
-                setActive(true);
-                laserList.forEach(x -> x.changeTexture(LaserColor.RED));
-            }
-        }
-
-    }
-
-    private void dig(final int x, final int y, final int z) {
-        Block digBlock = worldObj.getBlock(x, y, z);
-        if (digBlock instanceof BlockAir) return;
-
-        int needEnergy = BlockUtil.getDigEnergy(worldObj, x, y, z);
-        storage.modifyEnergyStored(-needEnergy);
-
-        if (FluidRegistry.lookupFluidForBlock(digBlock) == null) {
-            InvUtil.setInvItem(new ItemStack(digBlock, 1), this);
-        }
-
-        worldObj.setBlock(x, y, z, Blocks.air);
-    }
-
-    private void initWork() {
-        System.out.println(posData.toString());
-        startX = Math.min(posData.x1(), posData.x2());
-        startZ = Math.min(posData.z1(), posData.z2());
-        nowIterateX = startX;
-        nowIterateY = 256;
-        nowIterateZ = startZ;
-        endX = Math.max(posData.x1(), posData.x2());
-        endZ = Math.max(posData.z1(), posData.z2());
-    }
-
-
-    private void workFinished() {
-        System.out.println('A');
-        posData = null;
-        setActive(false);
-        isSleep = true;
+    public void initThread() {
+        digger = new ThreadDigGround(this);
+        digger.setDaemon(true);
+        digger.start();
     }
 
     @Override
     public void updateEntity() {
         super.updateEntity();
         if (!worldObj.isRemote) {
-            doWork();
-
+            //doWork();
             LQPacketHandler.INSTANCE.sendToAll(new LQSyncPacket(xCoord, yCoord, zCoord, stackCount, getEnergyStored(null), isActive()));
         }
 

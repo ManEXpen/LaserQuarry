@@ -2,11 +2,13 @@ package manexpen.LaserQuarry.block;
 
 import manexpen.LaserQuarry.LaserQuarry;
 import manexpen.LaserQuarry.api.PosData2Dim;
+import manexpen.LaserQuarry.api.TileMachineRegistry;
 import manexpen.LaserQuarry.gui.GuiHandler;
 import manexpen.LaserQuarry.item.ItemAreaSetter;
 import manexpen.LaserQuarry.lib.DirectionHandler;
 import manexpen.LaserQuarry.lib.GuiRegistry;
 import manexpen.LaserQuarry.tileentity.TileLaserQuarry;
+import manexpen.LaserQuarry.tileentity.TileMachineBase;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
@@ -60,6 +62,7 @@ public class BlockMachineLaserQuarry extends BlockMachineBase {
                     tile.clearData();
                     item.getFoundLasers().forEach(tile::setLaser);
                     tile.setPosData(new PosData2Dim(item.getPosData()));
+                    tile.initThread();
                     //TileEntityにデータを移したらitemのLaserListをクリア
                     item.clearFoundLaserList();
                     player.addChatComponentMessage(new ChatComponentText("Set Pos Data to LaserQuarry"));
@@ -82,6 +85,9 @@ public class BlockMachineLaserQuarry extends BlockMachineBase {
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entity, ItemStack stack) {
         super.onBlockPlacedBy(world, x, y, z, entity, stack);
         DirectionHandler.setMetadataByDir(world, x, y, z, entity);
+        if (!world.isRemote) {
+            TileMachineRegistry.addMachine((TileMachineBase) world.getTileEntity(x, y, z));
+        }
     }
 
     @Override
@@ -90,6 +96,9 @@ public class BlockMachineLaserQuarry extends BlockMachineBase {
         if (tmp != null) {
             TileLaserQuarry tile = (TileLaserQuarry) tmp;
             tile.clearData();
+            if (!world.isRemote) {
+                TileMachineRegistry.delMachine((TileMachineBase) world.getTileEntity(x, y, z));
+            }
         }
 
         super.breakBlock(world, x, y, z, block, var6);

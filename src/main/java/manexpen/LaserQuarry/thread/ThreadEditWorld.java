@@ -1,5 +1,7 @@
 package manexpen.LaserQuarry.thread;
 
+import manexpen.LaserQuarry.tileentity.TileLaserQuarry;
+import manexpen.LaserQuarry.tileentity.TileMachineBase;
 import net.minecraft.world.World;
 
 /**
@@ -8,15 +10,17 @@ import net.minecraft.world.World;
 public abstract class ThreadEditWorld extends Thread {
     protected World worldObj;
     protected int xCoord, yCoord, zCoord;
+    private TileMachineBase tile;
 
-    public ThreadEditWorld(int xCoord, int yCoord, int zCoord, World worldObj) {
-        this.xCoord = xCoord;
-        this.yCoord = yCoord;
-        this.zCoord = zCoord;
-        this.worldObj = worldObj;
+    public ThreadEditWorld(TileLaserQuarry tile) {
+        this.xCoord = tile.xCoord;
+        this.yCoord = tile.yCoord;
+        this.zCoord = tile.zCoord;
+        this.tile = tile;
     }
 
     @Override
     public void run() {
+        this.worldObj = tile.getWorldObj();
     }
 }

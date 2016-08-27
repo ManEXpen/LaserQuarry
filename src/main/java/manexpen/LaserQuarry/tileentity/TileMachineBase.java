@@ -22,7 +22,7 @@ public abstract class TileMachineBase extends TileEntity implements ISidedInvent
     protected int[] AccessibleSlot;
     public boolean isActive = false;
 
-    protected EnergyStorage storage;
+    public EnergyStorage storage;
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
