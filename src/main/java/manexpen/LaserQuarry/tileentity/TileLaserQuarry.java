@@ -30,7 +30,7 @@ public class TileLaserQuarry extends TileMachineBase {
     public TileLaserQuarry() {
         this.maxStackSize = 40000;
         this.itemStacks = new ItemStack[maxStackSize];
-        this.storage = new EnergyStorage(900000);
+        this.storage = new EnergyStorage(9000_0000);
         this.AccessibleSlot = new int[]{0, 1, 2, 3, 4, 5};
     }
 
@@ -54,72 +54,6 @@ public class TileLaserQuarry extends TileMachineBase {
         if (digger != null) digger.stop();
         digger = null;
     }
-
-//    private void doWork() {
-//        if (isActive() && posData != null) {
-//
-//            if (isSleep) initWork();
-//            isSleep = false;
-//
-//            System.out.println("StartDig");
-//            //一旦行が終わったらまたstart~,end~に初期化するようにする
-//            for (; nowIterateY > 0; nowIterateY--) {
-//                for (; nowIterateX <= endX; nowIterateX++) {
-//                    for (; nowIterateZ <= endZ; nowIterateZ++) {
-//                        if (BlockUtil.getDigEnergy(worldObj, nowIterateX, nowIterateY, nowIterateZ) < storage.getEnergyStored()) {
-//                            dig(nowIterateX, nowIterateY, nowIterateZ);
-//                            System.out.println("DIGING" + nowIterateX + " " + nowIterateY + " " + nowIterateZ);
-//                        } else {
-//                            return;
-//                        }
-//                    }
-//
-//                    nowIterateZ = startZ;
-//                }
-//                nowIterateX = startX;
-//            }
-//            workFinished();
-//        } else if (!isActive() && posData != null) {
-//            if (storage.getEnergyStored() >= 100) {
-//                setActive(true);
-//                laserList.forEach(x -> x.changeTexture(LaserColor.RED));
-//            }
-//        }
-//
-//    }
-//
-//    private void dig(final int x, final int y, final int z) {
-//        Block digBlock = worldObj.getBlock(x, y, z);
-//        if (digBlock instanceof BlockAir) return;
-//
-//        int needEnergy = BlockUtil.getDigEnergy(worldObj, x, y, z);
-//        storage.modifyEnergyStored(-needEnergy);
-//
-//        if (FluidRegistry.lookupFluidForBlock(digBlock) == null) {
-//            InvUtil.setInvItem(new ItemStack(digBlock, 1, worldObj.getBlockMetadata(x, y, z)), this);
-//        }
-//
-//        worldObj.setBlock(x, y, z, Blocks.air);
-//    }
-//
-//    private void initWork() {
-//        System.out.println(posData.toString());
-//        startX = Math.min(posData.x1(), posData.x2());
-//        startZ = Math.min(posData.z1(), posData.z2());
-//        nowIterateX = startX;
-//        nowIterateY = 256;
-//        nowIterateZ = startZ;
-//        endX = Math.max(posData.x1(), posData.x2());
-//        endZ = Math.max(posData.z1(), posData.z2());
-//    }
-//
-//
-//    private void workFinished() {
-//        System.out.println('A');
-//        posData = null;
-//        setActive(false);
-//        isSleep = true;
-//    }
 
     public void initThread() {
         digger = new ThreadDigGround(this);

@@ -136,7 +136,6 @@ public abstract class TileMachineBase extends TileEntity implements ISidedInvent
 
     @Override
     public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate) {
-        System.out.println(getEnergyStored(null));
         return storage.receiveEnergy(maxReceive, simulate);
     }
 

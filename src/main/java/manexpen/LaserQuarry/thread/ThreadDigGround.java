@@ -3,13 +3,20 @@ package manexpen.LaserQuarry.thread;
 import manexpen.LaserQuarry.entity.LaserColor;
 import manexpen.LaserQuarry.lib.BlockUtil;
 import manexpen.LaserQuarry.lib.InvUtil;
-import manexpen.LaserQuarry.lib.LogHelper;
+import manexpen.LaserQuarry.proxies.CommonProxy;
 import manexpen.LaserQuarry.tileentity.TileLaserQuarry;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.FakePlayerFactory;
+import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fluids.FluidRegistry;
+
+import java.lang.ref.WeakReference;
 
 /**
  * Created by ManEXpen on 2016/07/28.
@@ -17,6 +24,7 @@ import net.minecraftforge.fluids.FluidRegistry;
 public class ThreadDigGround extends ThreadEditWorld {
 
     private TileLaserQuarry tileLaserQuarry;
+    private WeakReference<EntityPlayer> fakePlayer;
 
     /*各種現在のブロックを指すためのパラメータ*/
     private int nowIterateX, nowIterateY, nowIterateZ, startX, startZ, endX, endZ = 0;
@@ -34,14 +42,21 @@ public class ThreadDigGround extends ThreadEditWorld {
 
     private void dig(final int x, final int y, final int z) {
         Block digBlock = worldObj.getBlock(x, y, z);
+        int meta = worldObj.getBlockMetadata(x, y, z);
         if (digBlock instanceof BlockAir) return;
 
         int needEnergy = BlockUtil.getDigEnergy(worldObj, x, y, z);
         tileLaserQuarry.storage.modifyEnergyStored(-needEnergy);
 
         if (FluidRegistry.lookupFluidForBlock(digBlock) == null) {
-            InvUtil.setInvItem(new ItemStack(digBlock, 1, worldObj.getBlockMetadata(x, y, z)), tileLaserQuarry);
+            InvUtil.setInvItem(new ItemStack(digBlock, 1, meta), tileLaserQuarry);
         }
+
+        //Block破壊音とか？
+        fakePlayer();
+        BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(x, y, z, worldObj, digBlock, meta, fakePlayer.get());
+        MinecraftForge.EVENT_BUS.post(event);
+        worldObj.playAuxSFXAtEntity(null, 2001, x, y, z, Block.getIdFromBlock(digBlock) + (meta << 12));
 
         worldObj.setBlock(x, y, z, Blocks.air);
     }
@@ -49,12 +64,10 @@ public class ThreadDigGround extends ThreadEditWorld {
     private void doWork() {
 
         if (tileLaserQuarry.isActive() && tileLaserQuarry.posData != null) {
-            LogHelper.info("はい");
 
             if (tileLaserQuarry.isSleep) initWork();
             tileLaserQuarry.isSleep = false;
 
-            System.out.println("StartDig");
             //一旦行が終わったらまたstart~,end~に初期化するようにする
             for (; nowIterateY > 0; nowIterateY--) {
                 for (; nowIterateX <= endX; nowIterateX++) {
@@ -94,6 +107,10 @@ public class ThreadDigGround extends ThreadEditWorld {
         tileLaserQuarry.posData = null;
         tileLaserQuarry.setActive(false);
         tileLaserQuarry.isSleep = true;
+    }
+
+    private void fakePlayer() {
+        fakePlayer = new WeakReference<>(FakePlayerFactory.get((WorldServer) worldObj, CommonProxy.GAME_PROFILE));
     }
 
     @Override
