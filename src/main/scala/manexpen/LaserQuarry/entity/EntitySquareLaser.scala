@@ -8,11 +8,13 @@ import net.minecraft.world.World
 /**
   * Created by ManEXpen on 2016/08/28.
   */
-class EntitySquareLaser(var world: World, var cornerPosX: Int, var cornerPosZ: Int, var endCornerPosX: Int, var endCornerPosZ: Int) extends Entity(world: World) with ILaserEntity {
+class EntitySquareLaser(var world: World, var x: Int, var z: Int, var xLength: Int, var zLength: Int) extends Entity(world: World) with ILaserEntity {
+  setPositionAndRotation(x, 256, z, 0, 0)
+  setSize(1, 1)
+
   def this(world: World) = this(world, 0, 0, 0, 0)
 
   private val texture = new ResourceLocation("laser", "texture/entities/laserRed.png")
-
 
   override def onUpdate(): Unit = super.onUpdate()
 

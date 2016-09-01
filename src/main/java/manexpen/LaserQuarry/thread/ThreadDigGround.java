@@ -16,15 +16,13 @@ import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fluids.FluidRegistry;
 
-import java.lang.ref.WeakReference;
-
 /**
  * Created by ManEXpen on 2016/07/28.
  */
 public class ThreadDigGround extends ThreadEditWorld {
 
     private TileLaserQuarry tileLaserQuarry;
-    private WeakReference<EntityPlayer> fakePlayer;
+    private EntityPlayer fakePlayer;
 
     /*各種現在のブロックを指すためのパラメータ*/
     private int nowIterateX, nowIterateY, nowIterateZ, startX, startZ, endX, endZ = 0;
@@ -54,7 +52,7 @@ public class ThreadDigGround extends ThreadEditWorld {
 
         //Block破壊音とか？
         fakePlayer();
-        BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(x, y, z, worldObj, digBlock, meta, fakePlayer.get());
+        BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(x, y, z, worldObj, digBlock, meta, fakePlayer);
         MinecraftForge.EVENT_BUS.post(event);
         worldObj.playAuxSFXAtEntity(null, 2001, x, y, z, Block.getIdFromBlock(digBlock) + (meta << 12));
 
@@ -78,10 +76,14 @@ public class ThreadDigGround extends ThreadEditWorld {
                             return;
                         }
                     }
-
                     nowIterateZ = startZ;
                 }
                 nowIterateX = startX;
+                //これないと重いで
+                try {
+                    sleep(5);
+                } catch (InterruptedException e) {
+                }
             }
             workFinished();
         } else if (!tileLaserQuarry.isActive() && tileLaserQuarry.posData != null) {
@@ -110,7 +112,7 @@ public class ThreadDigGround extends ThreadEditWorld {
     }
 
     private void fakePlayer() {
-        fakePlayer = new WeakReference<>(FakePlayerFactory.get((WorldServer) worldObj, CommonProxy.GAME_PROFILE));
+        fakePlayer = FakePlayerFactory.get((WorldServer) worldObj, CommonProxy.GAME_PROFILE);
     }
 
     @Override
