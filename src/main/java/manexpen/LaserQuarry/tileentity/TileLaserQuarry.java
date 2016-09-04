@@ -133,6 +133,11 @@ public class TileLaserQuarry extends TileMachineBase {
         this.markDirty();
     }
 
+    @Override
+    public boolean isItemValidForSlot(int slot, ItemStack itemStack) {
+        return itemStacks[0] != null;
+    }
+
 
     @Override
     public int[] getAccessibleSlotsFromSide(int p_94128_1_) {

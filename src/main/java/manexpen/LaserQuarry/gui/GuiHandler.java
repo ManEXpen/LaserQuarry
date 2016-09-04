@@ -4,7 +4,6 @@ import cpw.mods.fml.common.network.IGuiHandler;
 import manexpen.LaserQuarry.gui.client.GuiLaserQuarry;
 import manexpen.LaserQuarry.gui.container.LaserQuarryContainer;
 import manexpen.LaserQuarry.lib.GuiRegistry;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
@@ -12,7 +11,7 @@ import net.minecraft.world.World;
  * Created by ManEXpen on 2016/07/23.
  */
 public class GuiHandler implements IGuiHandler {
-    public static final String LASERQUARRY_GUI = "LaserQuarry";
+    public static final String LASERQUARRY_GUI = "LaserQuarry-gui";
 
     @Override
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
@@ -27,9 +26,5 @@ public class GuiHandler implements IGuiHandler {
             return new GuiLaserQuarry(x, y, z, player, world);
 
         return null;
-    }
-
-    public static class FontRendererObj {
-        public static FontRenderer fontRenderer;
     }
 }

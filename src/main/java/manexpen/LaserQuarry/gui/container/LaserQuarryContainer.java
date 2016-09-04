@@ -3,6 +3,8 @@ package manexpen.LaserQuarry.gui.container;
 import manexpen.LaserQuarry.tileentity.TileLaserQuarry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 /**
@@ -22,5 +24,14 @@ public class LaserQuarryContainer extends Container {
     @Override
     public boolean canInteractWith(EntityPlayer player) {
         return true;
+    }
+
+    @Override
+    public Slot getSlot(int p_75139_1_) {
+        return null;
+    }
+
+    @Override
+    public void putStackInSlot(int p_75141_1_, ItemStack p_75141_2_) {
     }
 }

@@ -71,8 +71,8 @@ public class BlockMachineLaserQuarry extends BlockMachineBase {
             }
         }
 
-
         player.openGui(LaserQuarry.instance, GuiRegistry.getGuiId(GuiHandler.LASERQUARRY_GUI), world, x, y, z);
+
         return true;
     }
 
