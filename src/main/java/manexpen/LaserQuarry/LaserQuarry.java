@@ -26,6 +26,7 @@ public class LaserQuarry {
     @SidedProxy(serverSide = "manexpen.LaserQuarry.proxies.CommonProxy", clientSide = "manexpen.LaserQuarry.proxies.ClientProxy")
     public static CommonProxy proxy;
 
+
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent e) {
         LogHelper.Logger = e.getModLog();

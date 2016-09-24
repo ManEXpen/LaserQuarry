@@ -72,35 +72,24 @@ public class TileLaserQuarry extends TileMachineBase {
     public void updateEntity() {
         super.updateEntity();
         if (!worldObj.isRemote) {
-            if (!triedToAssignTicket) {
+            if (!triedToAssignTicket && !isSleep) {
                 triedToAssignTicket = true;
                 if (assignTicket()) {
                     ticket.getModData().setInteger("machineX", xCoord);
                     ticket.getModData().setInteger("machineY", yCoord);
                     ticket.getModData().setInteger("machineZ", zCoord);
                     ForgeChunkManager.forceChunk(ticket, new ChunkCoordIntPair(xCoord >> 4, zCoord >> 4));
-                    System.out.println("Through");
+                    for (int chunkX = digger.startX >> 4; chunkX <= digger.endX >> 4; chunkX++) {
+                        for (int chunkZ = digger.startZ >> 4; chunkZ <= digger.endZ >> 4; chunkZ++) {
+                            ChunkCoordIntPair chunk = new ChunkCoordIntPair(chunkX, chunkZ);
+                            ForgeChunkManager.forceChunk(this.ticket, chunk);
+                        }
+                    }
                 } else LogHelper.warn("Couldn't be reserved for TileLaserQuarry");
             }
             LQPacketHandler.INSTANCE.sendToAll(new LQSyncPacket(xCoord, yCoord, zCoord, stackCount, getEnergyStored(null), isActive()));
         }
 
-    }
-
-    public void forceChunkLoading(ForgeChunkManager.Ticket ticket) {
-        if (this.ticket == null) this.ticket = ticket;
-
-        ChunkCoordIntPair machineChunk = new ChunkCoordIntPair(xCoord >> 4, zCoord >> 4);
-        ForgeChunkManager.forceChunk(this.ticket, machineChunk);
-
-        if (!isSleep) {
-            for (int chunkX = digger.startX >> 4; chunkX <= digger.endX >> 4; chunkX++) {
-                for (int chunkZ = digger.startZ >> 4; chunkZ <= digger.endZ >> 4; chunkZ++) {
-                    ChunkCoordIntPair chunk = new ChunkCoordIntPair(chunkX, chunkZ);
-                    ForgeChunkManager.forceChunk(this.ticket, chunk);
-                }
-            }
-        }
     }
 
     private boolean assignTicket() {

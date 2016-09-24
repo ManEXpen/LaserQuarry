@@ -6,9 +6,7 @@ import manexpen.LaserQuarry.LaserQuarry;
 import manexpen.LaserQuarry.gui.GuiHandler;
 import manexpen.LaserQuarry.lib.GuiRegistry;
 import manexpen.LaserQuarry.lib.LogHelper;
-import manexpen.LaserQuarry.lib.chunkManager.ChunkLoadingCallback;
 import manexpen.LaserQuarry.packet.LQPacketHandler;
-import net.minecraftforge.common.ForgeChunkManager;
 
 import java.util.UUID;
 
@@ -21,7 +19,6 @@ public class CommonProxy {
     public void register() {
         UniversalModInitializer.register();
         LogHelper.info("LaserQuarry's fake player: UUID = " + GAME_PROFILE.getId().toString() + ", name = '" + GAME_PROFILE.getName() + "'!");
-        ForgeChunkManager.setForcedChunkLoadingCallback(LaserQuarry.instance, new ChunkLoadingCallback());
     }
 
     public void networkRegister(LaserQuarry modLaserQuarry) {
