@@ -15,7 +15,7 @@ import net.minecraftforge.common.config.Configuration;
 /**
  * Created by ManEXpen on 2016/07/11.
  */
-@Mod(modid = LaserQuarry.MODNAME, name = LaserQuarry.MODNAME, useMetadata = true)
+@Mod(modid = LaserQuarry.MODNAME, name = LaserQuarry.MODNAME, useMetadata = true, version = "A-0.0.1")
 public class LaserQuarry {
 
     public static final String MODNAME = "LaserQuarry";

@@ -3,6 +3,7 @@ package manexpen.LaserQuarry.render;
 import manexpen.LaserQuarry.entity.EntitySquareLaser;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
@@ -20,6 +21,9 @@ public class RenderSquareLaser extends Render {
         glPushMatrix();
         glPushAttrib(GL_ENABLE_BIT);
 
+        glAlphaFunc(GL_GREATER, 0.1F);
+        bindEntityTexture(sqLaser);
+
         glDisable(GL_LIGHTING);
 
         //これないと位置ずれする
@@ -28,7 +32,11 @@ public class RenderSquareLaser extends Render {
         glTranslated(0.5, 0, 0.5);
         glScaled(2, 1, 2);
 
-        bindEntityTexture(sqLaser);
+
+        Tessellator tessellator = Tessellator.instance;
+        tessellator.startDrawingQuads();
+
+
 
 
         glPopAttrib();
