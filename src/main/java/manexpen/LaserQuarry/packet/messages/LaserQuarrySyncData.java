@@ -6,16 +6,16 @@ import io.netty.buffer.ByteBuf;
 /**
  * Created by ManEXpen on 2016/07/25.
  */
-public class LQSyncPacket implements IMessage {
+public class LaserQuarrySyncData implements IMessage {
 
     private int x, y, z;
     private int displayStackSize, energy;
     private boolean isActive;
 
-    public LQSyncPacket() {
+    public LaserQuarrySyncData() {
     }
 
-    public LQSyncPacket(int x, int y, int z, int displayStackSize, int energy, boolean isActive) {
+    public LaserQuarrySyncData(int x, int y, int z, int displayStackSize, int energy, boolean isActive) {
         this.x = x;
         this.y = y;
         this.z = z;

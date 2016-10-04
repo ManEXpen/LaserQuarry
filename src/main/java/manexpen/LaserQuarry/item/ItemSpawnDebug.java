@@ -16,7 +16,7 @@ public class ItemSpawnDebug extends Item {
 
     @Override
     public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float p_77648_8_, float p_77648_9_, float p_77648_10_) {
-        world.spawnEntityInWorld(new EntitySquareLaser(world, x, z, 5, 5));
+        if (world.isRemote) world.spawnEntityInWorld(new EntitySquareLaser(world, x, z, 5, 5));
         return true;
     }
 }

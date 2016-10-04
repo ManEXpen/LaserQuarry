@@ -4,9 +4,10 @@ import cofh.api.energy.EnergyStorage;
 import manexpen.LaserQuarry.LaserQuarry;
 import manexpen.LaserQuarry.api.PosData2Dim;
 import manexpen.LaserQuarry.entity.EntityRedLine;
+import manexpen.LaserQuarry.entity.EntitySquareLaser;
 import manexpen.LaserQuarry.lib.LogHelper;
 import manexpen.LaserQuarry.packet.LQPacketHandler;
-import manexpen.LaserQuarry.packet.messages.LQSyncPacket;
+import manexpen.LaserQuarry.packet.messages.LaserQuarrySyncData;
 import manexpen.LaserQuarry.thread.ThreadDigGround;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -22,8 +23,9 @@ import java.util.ArrayList;
  */
 public class TileLaserQuarry extends TileMachineBase {
     public ArrayList<EntityRedLine> laserList = new ArrayList<>();
-    private ThreadDigGround digger;
+    public ThreadDigGround digger;
     private boolean triedToAssignTicket = false;
+    private EntitySquareLaser sqLaser;
     public PosData2Dim posData;
     public ForgeChunkManager.Ticket ticket;
 
@@ -87,7 +89,7 @@ public class TileLaserQuarry extends TileMachineBase {
                     }
                 } else LogHelper.warn("Couldn't be reserved for TileLaserQuarry");
             }
-            LQPacketHandler.INSTANCE.sendToAll(new LQSyncPacket(xCoord, yCoord, zCoord, stackCount, getEnergyStored(null), isActive()));
+            LQPacketHandler.INSTANCE.sendToAll(new LaserQuarrySyncData(xCoord, yCoord, zCoord, stackCount, getEnergyStored(null), isActive()));
         }
 
     }
@@ -210,6 +212,4 @@ public class TileLaserQuarry extends TileMachineBase {
     public double calcProgress(double progress) {
         return 0;
     }
-
-
 }

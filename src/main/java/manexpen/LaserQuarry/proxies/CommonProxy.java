@@ -2,7 +2,9 @@ package manexpen.LaserQuarry.proxies;
 
 import com.mojang.authlib.GameProfile;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.registry.EntityRegistry;
 import manexpen.LaserQuarry.LaserQuarry;
+import manexpen.LaserQuarry.entity.EntitySquareLaser;
 import manexpen.LaserQuarry.gui.GuiHandler;
 import manexpen.LaserQuarry.lib.GuiRegistry;
 import manexpen.LaserQuarry.lib.LogHelper;
@@ -20,6 +22,9 @@ public class CommonProxy {
     public void register() {
         UniversalModInitializer.register();
         LogHelper.info("LaserQuarry's fake player: UUID = " + GAME_PROFILE.getId().toString() + ", name = '" + GAME_PROFILE.getName() + "'!");
+
+        EntityRegistry.registerModEntity(EntitySquareLaser.class, "SquareLaser", EntityRegistry.findGlobalUniqueEntityId(), LaserQuarry.instance, 1024, 5, true);
+
         ForgeChunkManager.setForcedChunkLoadingCallback(LaserQuarry.instance, null);
     }
 

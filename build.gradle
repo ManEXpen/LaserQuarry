@@ -57,6 +57,23 @@ sourceSets {
     }
 }
 
+compileScala {
+    scalaCompileOptions.useCompileDaemon = true
+
+    // optionally specify host and port of the daemon:
+    // scalaCompileOptions.daemonServer = "localhost:4243"
+}
+tasks.withType(ScalaCompile) {
+    configure(scalaCompileOptions.forkOptions) {
+        memoryMaximumSize = '1g'
+        jvmArgs = ['-XX:MaxPermSize=1024m']
+    }
+}
+
+tasks.withType(ScalaCompile) {
+    scalaCompileOptions.useAnt = false
+}
+
 processResources
         {
             // this will ensure that this task is redone when the versions change.
@@ -76,20 +93,3 @@ processResources
                 exclude 'mcmod.info'
             }
         }
-
-compileScala {
-    scalaCompileOptions.useCompileDaemon = true
-
-    // optionally specify host and port of the daemon:
-    // scalaCompileOptions.daemonServer = "localhost:4243"
-}
-tasks.withType(ScalaCompile) {
-    configure(scalaCompileOptions.forkOptions) {
-        memoryMaximumSize = '1g'
-        jvmArgs = ['-XX:MaxPermSize=1024m']
-    }
-}
-
-tasks.withType(ScalaCompile) {
-    scalaCompileOptions.useAnt = false
-}

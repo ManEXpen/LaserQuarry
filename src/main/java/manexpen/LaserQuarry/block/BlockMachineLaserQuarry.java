@@ -49,9 +49,9 @@ public class BlockMachineLaserQuarry extends BlockMachineBase {
         TileEntity tmp = world.getTileEntity(x, y, z);
         ItemStack b = player.getCurrentEquippedItem();
 
-        if (!world.isRemote && tmp != null && b != null) {
+        if (tmp != null && b != null) {
 
-            if (b.getItem() instanceof ItemAreaSetter && tmp instanceof TileLaserQuarry) {
+            if (!world.isRemote && b.getItem() instanceof ItemAreaSetter && tmp instanceof TileLaserQuarry) {
                 TileLaserQuarry tile = (TileLaserQuarry) tmp;
                 ItemAreaSetter item = (ItemAreaSetter) b.getItem();
 

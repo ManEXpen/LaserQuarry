@@ -21,23 +21,46 @@ public class RenderSquareLaser extends Render {
         glPushMatrix();
         glPushAttrib(GL_ENABLE_BIT);
 
-        glAlphaFunc(GL_GREATER, 0.1F);
-        bindEntityTexture(sqLaser);
+        glDisable(GL_CULL_FACE);
+        glEnable(GL_BLEND);
+        glEnable(GL_LIGHTING);
+        glEnable(GL_LIGHT0);
 
-        glDisable(GL_LIGHTING);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         //これないと位置ずれする
         glTranslated(x, y, z);
-
         glTranslated(0.5, 0, 0.5);
-        glScaled(2, 1, 2);
 
 
         Tessellator tessellator = Tessellator.instance;
+        bindEntityTexture(sqLaser);
         tessellator.startDrawingQuads();
+        tessellator.addVertex(0, 0, 0);
+        tessellator.addVertex(sqLaser.xLength(), 0, 0);
+        tessellator.addVertex(sqLaser.xLength(), 0, sqLaser.zLength());
+        tessellator.addVertex(0, 0, sqLaser.zLength());
+//        tessellator.addVertex(0, 0, 0);
+//        tessellator.addVertex(1, 0, 0);
+//        tessellator.addVertex(1, 1, 0);
+//        tessellator.addVertex(0, 1, 0);
+//
+//        tessellator.addVertex(0, 0, 0);
+//        tessellator.addVertex(0, 0, 1);
+//        tessellator.addVertex(0, 1, 1);
+//        tessellator.addVertex(0, 1, 0);
+//
+//        tessellator.addVertex(0, 0, 1);
+//        tessellator.addVertex(1, 0, 1);
+//        tessellator.addVertex(1, 1, 1);
+//        tessellator.addVertex(0, 1, 1);
+//
+//        tessellator.addVertex(1, 0, 0);
+//        tessellator.addVertex(1, 0, 1);
+//        tessellator.addVertex(1, 1, 1);
+//        tessellator.addVertex(1, 1, 0);
 
-
-
+        tessellator.draw();
 
         glPopAttrib();
         glPopMatrix();

@@ -12,11 +12,15 @@ class EntitySquareLaser(var world: World, var x: Int, var z: Int, var xLength: I
   setPositionAndRotation(x, 256, z, 0, 0)
   setSize(1, 1)
 
+
   def this(world: World) = this(world, 0, 0, 0, 0)
 
-  private val texture = new ResourceLocation("laser", "texture/entities/laserRed.png")
+  private val texture = new ResourceLocation("laser", "textures/entities/fallLaser.png")
 
   override def onUpdate(): Unit = super.onUpdate()
+
+
+  override def setDead(): Unit = super.setDead()
 
   override def getTexture: ResourceLocation = texture
 

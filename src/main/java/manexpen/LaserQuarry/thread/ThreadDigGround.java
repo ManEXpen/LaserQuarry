@@ -77,7 +77,7 @@ public class ThreadDigGround extends ThreadEditWorld {
                 //これないと重いで
                 try {
                     sleep(5);
-                } catch (InterruptedException e) {
+                } catch (InterruptedException ignored) {
                 }
             }
             workFinished();
@@ -90,7 +90,6 @@ public class ThreadDigGround extends ThreadEditWorld {
     }
 
     private void initWork() {
-        System.out.println(tileLaserQuarry.posData.toString());
         startX = Math.min(tileLaserQuarry.posData.x1(), tileLaserQuarry.posData.x2());
         startZ = Math.min(tileLaserQuarry.posData.z1(), tileLaserQuarry.posData.z2());
         nowIterateX = startX;
@@ -104,12 +103,12 @@ public class ThreadDigGround extends ThreadEditWorld {
         tileLaserQuarry.posData = null;
         tileLaserQuarry.setActive(false);
         tileLaserQuarry.isSleep = true;
-
     }
 
     private void fakePlayer() {
         fakePlayer = FakePlayerFactory.get((WorldServer) worldObj, CommonProxy.GAME_PROFILE);
     }
+
 
     @Override
     public void run() {

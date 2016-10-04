@@ -59,7 +59,6 @@ public class UniversalModInitializer {
                     obj = null;
                     return;
                 }
-                obj = null;
 
                 Constructor cons = c.getConstructor();
                 f.set(null, cons.newInstance());
