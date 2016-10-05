@@ -2,9 +2,9 @@ package manexpen.LaserQuarry.proxies;
 
 import com.mojang.authlib.GameProfile;
 import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.registry.EntityRegistry;
+import manexpen.LaserQuarry.LQItemBlockList;
 import manexpen.LaserQuarry.LaserQuarry;
-import manexpen.LaserQuarry.entity.EntitySquareLaser;
+import manexpen.LaserQuarry.api.UniversalModInitializer;
 import manexpen.LaserQuarry.gui.GuiHandler;
 import manexpen.LaserQuarry.lib.GuiRegistry;
 import manexpen.LaserQuarry.lib.LogHelper;
@@ -19,12 +19,9 @@ import java.util.UUID;
 public class CommonProxy {
     public static final GameProfile GAME_PROFILE = new GameProfile(UUID.nameUUIDFromBytes("LaserQuarry".getBytes()), "[LaserQuarry]");
 
-    public void register() {
-        UniversalModInitializer.register();
+    public void register(LaserQuarry modLaserQuarry) {
         LogHelper.info("LaserQuarry's fake player: UUID = " + GAME_PROFILE.getId().toString() + ", name = '" + GAME_PROFILE.getName() + "'!");
-
-        EntityRegistry.registerModEntity(EntitySquareLaser.class, "SquareLaser", EntityRegistry.findGlobalUniqueEntityId(), LaserQuarry.instance, 1024, 5, true);
-
+        UniversalModInitializer.regist(LQItemBlockList.class, modLaserQuarry);
         ForgeChunkManager.setForcedChunkLoadingCallback(LaserQuarry.instance, null);
     }
 

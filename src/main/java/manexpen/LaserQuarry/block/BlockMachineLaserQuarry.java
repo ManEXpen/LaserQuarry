@@ -1,5 +1,7 @@
 package manexpen.LaserQuarry.block;
 
+import cpw.mods.fml.common.registry.GameRegistry;
+import manexpen.LaserQuarry.LQItemBlockList;
 import manexpen.LaserQuarry.LaserQuarry;
 import manexpen.LaserQuarry.api.PosData2Dim;
 import manexpen.LaserQuarry.gui.GuiHandler;
@@ -127,6 +129,15 @@ public class BlockMachineLaserQuarry extends BlockMachineBase {
 
     @Override
     public void registerRecipe() {
+        GameRegistry.addRecipe(new ItemStack(LQItemBlockList.quarry),
+                "XYZ",
+                "AZA",
+                "BBB",
+                'X', LQItemBlockList.highLevelConductor,
+                'Y', LQItemBlockList.chipSet,
+                'Z', LQItemBlockList.octaRedCrystal,
+                'A', LQItemBlockList.circLaserGen,
+                'B', LQItemBlockList.positionFixinger);
     }
 
 }

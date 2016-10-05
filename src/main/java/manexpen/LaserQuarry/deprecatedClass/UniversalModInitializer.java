@@ -1,4 +1,4 @@
-package manexpen.LaserQuarry.proxies;
+package manexpen.LaserQuarry.deprecatedClass;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import manexpen.LaserQuarry.LQItemBlockList;
@@ -16,6 +16,7 @@ import java.util.List;
 /**
  * Created by ManEXpen on 2016/07/15.
  */
+@Deprecated
 public class UniversalModInitializer {
 
     private static List<Field> fields = Arrays.asList(LQItemBlockList.class.getDeclaredFields());
@@ -56,7 +57,6 @@ public class UniversalModInitializer {
 
                 if (obj instanceof Class) {
                     GameRegistry.registerTileEntity((Class) obj, f.getName());
-                    obj = null;
                     return;
                 }
 

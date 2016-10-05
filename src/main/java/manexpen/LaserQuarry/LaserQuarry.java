@@ -15,7 +15,7 @@ import net.minecraftforge.common.config.Configuration;
 /**
  * Created by ManEXpen on 2016/07/11.
  */
-@Mod(modid = LaserQuarry.MODNAME, name = LaserQuarry.MODNAME, useMetadata = true, version = "A-0.0.1")
+@Mod(modid = LaserQuarry.MODNAME, name = LaserQuarry.MODNAME, useMetadata = true, version = "A-0.0.1", dependencies = "required-after:ProjectE;required-after:BuildCraft|Core")
 public class LaserQuarry {
 
     public static final String MODNAME = "LaserQuarry";
@@ -39,7 +39,7 @@ public class LaserQuarry {
     @Mod.EventHandler
     public void init(FMLInitializationEvent e) {
         LogHelper.info("Initializing...");
-        proxy.register();
+        proxy.register(instance);
         proxy.networkRegister(instance);
         proxy.renderRegister(instance);
         LogHelper.info("Initializing Finished...");

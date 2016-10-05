@@ -2,13 +2,14 @@ package manexpen.LaserQuarry.item;
 
 import cofh.api.energy.IEnergyContainerItem;
 import com.google.common.base.Preconditions;
+import manexpen.LaserQuarry.api.IHasRecipe;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 /**
  * Created by ManEXpen on 2016/07/30.
  */
-public abstract class ItemToolBase extends Item implements IEnergyContainerItem {
+public abstract class ItemToolBase extends Item implements IEnergyContainerItem, IHasRecipe {
     public ItemToolBase() {
         setNoRepair();
     }

@@ -1,13 +1,18 @@
 package manexpen.LaserQuarry.item;
 
+import buildcraft.BuildCraftSilicon;
 import cofh.lib.util.helpers.EnergyHelper;
+import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import manexpen.LaserQuarry.LQItemBlockList;
 import manexpen.LaserQuarry.api.EnumChatColor;
 import manexpen.LaserQuarry.api.PosData2Dim;
 import manexpen.LaserQuarry.entity.EntityRedLine;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.StatCollector;
@@ -169,5 +174,15 @@ public class ItemAreaSetter extends ItemToolBase {
         this.useCount = useCount;
     }
 
+    @Override
+    public void registerRecipe() {
+        GameRegistry.addRecipe(new ItemStack(LQItemBlockList.areaSetter),
+                "XYX",
+                "ZAZ",
+                'X', BuildCraftSilicon.redstoneCrystal,
+                'Y', BuildCraftSilicon.laserBlock,
+                'Z', Blocks.wool,
+                'A', Items.stick);
+    }
 }
 

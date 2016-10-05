@@ -13,6 +13,7 @@ public class BlockUtil {
         Block checkBlock = world.getBlock(x, y, z);
         if (checkBlock instanceof BlockAir) return 0;
         float hardness = checkBlock.getBlockHardness(world, x, y, z);
-        return (int) (hardness * Config.EnergyCoefficient);
+        int energy = (int) (hardness * Config.EnergyCoefficient);
+        return energy > 200 ? 200 : energy;
     }
 }
