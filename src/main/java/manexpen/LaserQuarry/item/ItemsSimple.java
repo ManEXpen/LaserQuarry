@@ -10,8 +10,14 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.world.World;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by manex on 2016/10/05.
@@ -123,6 +129,77 @@ public class ItemsSimple {
                     'X', new ItemStack(BuildCraftSilicon.redstoneChipset, 1, 4),
                     'Y', LQItemBlockList.reinforcedGlass,
                     'Z', LQItemBlockList.lowLevelConductor);
+        }
+    }
+
+    public static class ItemStrangeMeat extends ItemFood {
+
+        private static final PotionEffect EFFECT1 = new PotionEffect(Potion.hunger.id, 600, 1);
+        private static final PotionEffect EFFECT2 = new PotionEffect(Potion.confusion.id, 600, 0);
+
+        public ItemStrangeMeat() {
+            super(4, 0.1F, true);
+            setTextureName("laser:meat");
+        }
+
+        @Override
+        protected void onFoodEaten(ItemStack itemStack, World world, EntityPlayer player) {
+            if (!world.isRemote) {
+                player.addPotionEffect(EFFECT1);
+                player.addPotionEffect(EFFECT2);
+            }
+        }
+    }
+
+    public static class canVillagerMeat extends ItemFood implements IHasRecipe {
+        private static int newCount = 0;
+        private canType type;
+        private List<PotionEffect> effects = new ArrayList<>();
+
+        public canVillagerMeat() {
+            super(6, 0.1F, true);
+            switch (newCount) {
+                case 0:
+                    setTextureName("laser:emptyCan");
+                    break;
+                case 1:
+                    setTextureName("laser:meatCan");
+                    effects.add(new PotionEffect(Potion.hunger.id, 1200, 2));
+                    effects.add(new PotionEffect(Potion.confusion.id, 1200, 1));
+                    break;
+                case 2:
+                    setTextureName("laser:emeraldCan");
+                    effects.add(new PotionEffect(Potion.hunger.id, 1200, 2));
+                    effects.add(new PotionEffect(Potion.confusion.id, 1200, 1));
+                    effects.add(new PotionEffect(Potion.poison.id, 1200, 1));
+                    break;
+                case 3:
+                    setTextureName("laser:superEmeraldCan");
+                    setAlwaysEdible();
+                    break;
+            }
+            type = canType.values()[newCount];
+            newCount++;
+        }
+
+
+        @Override
+        public ItemStack onEaten(ItemStack itemStack, World world, EntityPlayer player) {
+            super.onEaten(itemStack, world, player);
+
+            if (type == canType.SUPER) world.createExplosion(null, player.posX, player.posY, player.posZ, 10.0F, true);
+            effects.forEach(player::addPotionEffect);
+
+            return type == canType.EMERALD || type == canType.INMEAT ? new ItemStack(LQItemBlockList.emptyCan) : itemStack;
+        }
+
+        @Override
+        public void registerRecipe() {
+
+        }
+
+        private enum canType {
+            EMPTY, INMEAT, EMERALD, SUPER
         }
     }
 

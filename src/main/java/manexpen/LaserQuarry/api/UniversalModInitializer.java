@@ -1,5 +1,6 @@
 package manexpen.LaserQuarry.api;
 
+import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -7,6 +8,7 @@ import manexpen.LaserQuarry.LaserQuarry;
 import manexpen.LaserQuarry.lib.LogHelper;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.item.Item;
 
 import java.lang.reflect.Field;
@@ -18,12 +20,12 @@ import java.lang.reflect.Field;
 public class UniversalModInitializer {
     public static void regist(Class<?> registedClass, Object modInstance) {
         try {
+            for (Field field : registedClass.getDeclaredFields())
+                if (!(field.get(null) instanceof Class))
+                    field.set(null, field.getType().getDeclaredConstructor().newInstance());
             for (Field field : registedClass.getDeclaredFields()) {
                 if (field.get(null) instanceof Class) classDistributor(field, modInstance);
-                else {
-                    field.set(null, field.getType().getDeclaredConstructor().newInstance());
-                    gameRegister(field);
-                }
+                else gameRegister(field);
             }
         } catch (ReflectiveOperationException e) {
             e.printStackTrace();
@@ -35,13 +37,17 @@ public class UniversalModInitializer {
         if (anotation == null) throw new ReflectiveOperationException("Please Check Your Class!" + field.getName());
         switch (anotation.value()) {
             case ENTITY:
-                EntityRegistry.registerModEntity((Class) field.get(null), field.getName(), EntityRegistry.findGlobalUniqueEntityId(), LaserQuarry.instance, 256, 5, true);
+                EntityRegistry.registerGlobalEntityID((Class) field.get(null), field.getName(), EntityRegistry.findGlobalUniqueEntityId());
+                EntityRegistry.registerModEntity((Class) field.get(null), field.getName(), EntityRegistry.findGlobalUniqueEntityId(), LaserQuarry.instance, 128, 1, true);
                 break;
             case ENTITYRENDER:
                 RenderingRegistry.registerEntityRenderingHandler(anotation.needToReg(), (Render) ((Class) field.get(null)).newInstance());
                 break;
             case TILEENTITY:
                 GameRegistry.registerTileEntity((Class) field.get(null), field.getName());
+                break;
+            case TILEENTITYRENDER:
+                ClientRegistry.bindTileEntitySpecialRenderer(anotation.needToReg(), (TileEntitySpecialRenderer) ((Class) field.get(null)).newInstance());
                 break;
         }
     }
